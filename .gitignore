@@ -1,0 +1,3 @@
+# Ignore build and Binaries directory
+build/
+Binaries/
