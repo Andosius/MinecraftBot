@@ -52,7 +52,7 @@ project "MineBot"
         defines { "NDEBUG" }
 
     -- Windows
-        -- Configure Debug (NOT WORKING WITH DPP!!!)
+        -- Configure Debug
     filter { "system:windows", "configurations:Debug" }
         runtime "Debug"
         
@@ -70,7 +70,7 @@ project "MineBot"
 
     -- Copy .dll dependencies to directory on Windows only
     filter { "system:windows" }
-        postbuildcommands { "{COPYFILE} %[../%{DPP_Dir}/bin/**] %[%{!cfg.targetdir}]" }
+        postbuildcommands { "{COPYFILE} %[../%{Binarydir.dpp}/**] %[%{!cfg.targetdir}]" }
     
     -- Linux & macOS
     filter "system:not windows"
