@@ -1,3 +1,5 @@
 # Ignore build and Binaries directory
 build/
 Binaries/
+Vendor/vcpkg
+Dependendies/libssh
