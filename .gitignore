@@ -2,4 +2,4 @@
 build/
 Binaries/
 Vendor/vcpkg
-Dependendies/libssh
+Dependencies/libssh
