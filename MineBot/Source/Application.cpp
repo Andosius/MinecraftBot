@@ -24,7 +24,7 @@ void Application::Run()
 	{
 		core.Run();
 	}
-	catch (std::exception& e)
+	catch (std::exception&)
 	{
 		core.Stop();
 	}
