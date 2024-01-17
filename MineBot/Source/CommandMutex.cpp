@@ -9,6 +9,7 @@
 
 
 
-static std::vector<std::string> s_Blockers = {};
-static std::mutex s_BlockerMutex = std::mutex();
-static bool s_CanExecuteCommands = true;
+std::vector<std::string> s_Blockers = {};
+std::mutex s_CommandMutex = std::mutex();
+bool s_CanExecuteCommands = true;
+
