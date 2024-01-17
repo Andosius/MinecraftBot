@@ -4,6 +4,7 @@
 #include "Log.hpp"
 
 // External dependencies
+#define LIBSSH_STATIC 1
 #define SSH_NO_CPP_EXCEPTIONS
 #include <libssh/libsshpp.hpp>
 
@@ -18,6 +19,7 @@ std::string Utility::SendCommand(const std::string& command)
 	ssh::Session session;
 	std::string output;
 
+	session.setOption(SSH_OPTIONS_PASSWORD_AUTH, 1);
 	session.setOption(SSH_OPTIONS_HOST, AppSettings->SSH.Hostname.c_str());
 	session.setOption(SSH_OPTIONS_USER, AppSettings->SSH.Username.c_str());
 	session.setOption(SSH_OPTIONS_PORT, 22);
