@@ -1,5 +1,6 @@
 // Local dependencies
 #include "Config.hpp"
+#include "Log.hpp"
 
 // External dependencies
 
@@ -11,7 +12,7 @@
 //======================================
 
 
-std::shared_ptr<Config> AppSettings = std::make_shared<Config>();
+std::shared_ptr<Config> AppSettings;
 
 
 void Config::LoadConfigurationFile()
@@ -21,10 +22,12 @@ void Config::LoadConfigurationFile()
 		std::ifstream config_file("config.json", std::ios_base::app);
 		std::string json_string(std::istreambuf_iterator<char>{config_file}, {});
 
-		nlohmann::json data = nlohmann::json::parse(json_string);
-		from_json(data, AppSettings.get());
+		json data = nlohmann::json::parse(json_string);
+
+		AppSettings = std::make_shared<Config>(data.template get<Config>());
 	}
 	catch (std::exception& e)
 	{
+		LOG_ERROR(e.what());
 	}
 }
