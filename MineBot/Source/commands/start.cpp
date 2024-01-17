@@ -1,5 +1,6 @@
 // Local dependencies
 #include "commands/start.hpp"
+#include "CommandMutex.hpp"
 
 // External dependencies
 
@@ -7,59 +8,53 @@
 
 //======================================
 
-static std::mutex s_StartMutex = std::mutex();
-static std::chrono::system_clock::time_point s_StartAvailable = std::chrono::system_clock::now();
 
+static std::chrono::system_clock::time_point s_StartAvailable = std::chrono::system_clock::now();
 
 
 void start_handler(dpp::cluster& bot, const dpp::slashcommand_t& event)
 {
-	std::lock_guard l(s_StartMutex);
-
 	event.thinking();
+	std::lock_guard<std::mutex> lock(s_CommandMutex);
 
-	if (IsServerRunning())
+
+	if (Utility::IsServerRunning())
 	{
 		event.edit_original_response(
 			dpp::message().add_embed(
 				dpp::embed().
 				set_color(dpp::colors::red).
-				set_title("Server is already running!").
-				set_description("Can't start server as it is already running!")
+				set_title("Server läuft bereits!").
+				set_description("Der Server kann nicht gestartet werden, da dieser bereits aktiv ist.")
 			)
 		);
+		return;
 	}
-	else
+
+
+	if (std::chrono::system_clock::now() >= s_StartAvailable)
 	{
-		if (std::chrono::system_clock::now() >= s_StartAvailable)
-		{
-			s_StartAvailable = std::chrono::system_clock::now() + std::chrono::minutes(2);
+		s_StartAvailable = std::chrono::system_clock::now() + std::chrono::minutes(2);
+		Utility::SendCommand("systemctl start minecraft");
 
-			Application::SendCommand("systemctl start minecraft");
-
-			//Application* app = Application::Get();
-
-			//Application::SendCommand(fmt::format("cd {0} && /usr/bin/screen -dmS {1} {2}", app->m_RemoteScreenLocation, app->m_RemoteScreenName, app->m_RemoteScreenExecutable));
-
-			event.edit_original_response(
-				dpp::message().add_embed(
-					dpp::embed().
-					set_color(dpp::colors::green).
-					set_title("Server started!").
-					set_description("This may take a while...")
-				)
-			);
-		}
-		else
-		{
-			event.edit_original_response(
-				dpp::message().add_embed(
-					dpp::embed().
-					set_color(dpp::colors::yellow).
-					set_title("Command on cooldown!").
-					set_description("This command needs two minutes to cool down!")
-				)
-			);
-		}
+		event.edit_original_response(
+			dpp::message().add_embed(
+				dpp::embed().
+				set_color(dpp::colors::green).
+				set_title("Server gestartet!").
+				set_description("Der Server wird gestartet.")
+			)
+		);
+		return;
 	}
+	
+	event.edit_original_response(
+		dpp::message().add_embed(
+			dpp::embed().
+			set_color(dpp::colors::yellow).
+			set_title("Server kann nicht gestartet werden!").
+			set_description("Der Befehl hat eine Abklingzeit von 2 Minuten.")
+		)
+	);
+	return;
 }

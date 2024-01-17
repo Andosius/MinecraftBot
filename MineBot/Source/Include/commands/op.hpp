@@ -2,7 +2,6 @@
 
 // Local dependencies
 #include "Utility.hpp"
-#include "Application.hpp"
 
 // External dependencies
 #pragma warning(push, 0)

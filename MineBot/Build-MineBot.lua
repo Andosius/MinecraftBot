@@ -20,6 +20,7 @@ project "MineBot"
         "%{IncludeDir.fmt}",
         "%{IncludeDir.json}",
         "%{IncludeDir.dpp}",
+        "%{IncludeDir.libssh}",
 		"Source/Include"
     }
 
@@ -36,11 +37,13 @@ project "MineBot"
 
     -- Libraries
     libdirs { 
-        "%{LibraryDir.dpp}"
+        "%{LibraryDir.dpp}",
+        "%{LibraryDir.libssh}"
     }
 
     links { 
-        "dpp"
+        "dpp",
+        "ssh"
     }
 
 
@@ -70,14 +73,14 @@ project "MineBot"
 
     -- Copy .dll dependencies to directory on Windows only
     filter { "system:windows" }
-        postbuildcommands { "{COPYFILE} %[../%{Binarydir.dpp}/**] %[%{!cfg.targetdir}]" }
+        postbuildcommands {
+            "{COPYFILE} %[%{BinaryDir.dpp}/**] %[%{!cfg.targetdir}]",
+            "{COPYFILE} %[%{BinaryDir.libssh}/**] %[%{!cfg.targetdir}]"
+        }
     
     -- Linux & macOS
-    filter "system:not windows"
-        buildoptions { "-pthread", "-fPIC" }
-
     filter { "system:not windows", "configurations:Debug" }
-        buildoptions { "-g", "-Og" }
+        buildoptions { "-pthread", "-fPIC", "-g", "-Og" }
 
     filter { "system:not windows", "configurations:Release" }
-        buildoptions { "-O3" }
+        buildoptions { "-pthread", "-fPIC", "-O3" }

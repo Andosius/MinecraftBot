@@ -2,7 +2,6 @@
 
 // Local dependencies
 #include "Utility.hpp"
-#include "Application.hpp"
 
 // External dependencies
 #pragma warning(push, 0)
@@ -17,4 +16,3 @@
 
 
 void blocker_handler(dpp::cluster& bot, const dpp::slashcommand_t& event);
-bool IsInteractionBlocked();

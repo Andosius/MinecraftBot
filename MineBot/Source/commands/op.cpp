@@ -1,5 +1,6 @@
 // Local dependencies
 #include "commands/op.hpp"
+#include "CommandMutex.hpp"
 
 // External dependencies
 
@@ -8,90 +9,81 @@
 //======================================
 
 
-void DeOP(const std::string& username, const dpp::slashcommand_t& event)
-{
-	Application::SendCommand(fmt::format("/usr/bin/screen -p 0 -S {0} -X eval 'stuff \"deop {1}\"\\015'", Application::Get()->m_RemoteScreenName, username));
-
-	event.edit_original_response(
-		dpp::message().add_embed(
-			dpp::embed().
-			set_color(dpp::colors::green).
-			set_title("Server received the command!").
-			set_description("The server will remove you as an operator soon!")
-		)
-	);
-}
-
-void OP(const std::string& username, const dpp::slashcommand_t& event)
-{
-	Application::SendCommand(fmt::format("/usr/bin/screen -p 0 -S {0} -X eval 'stuff \"op {1}\"\\015'", Application::Get()->m_RemoteScreenName, username));
-
-	event.edit_original_response(
-		dpp::message().add_embed(
-			dpp::embed().
-			set_color(dpp::colors::green).
-			set_title("Server received the command!").
-			set_description("The server will make you an operator soon!")
-		)
-	);
-}
-
 void op_handler(dpp::cluster& bot, const dpp::slashcommand_t& event)
 {
-	std::lock_guard l(Application::Get()->m_AccountsMutex);
-
 	event.thinking();
+	std::lock_guard<std::mutex> lock(s_CommandMutex);
 
-	if (IsServerRunning())
-	{
-		uint64_t account_id = (uint64_t)event.command.get_issuing_user().id;
-		nlohmann::json accounts = GetAccounts();
 
-		size_t idx = -1;
-		IsUserWhitelisted(account_id, idx);
-
-		if (idx != -1)
-		{
-			std::string username = accounts[idx]["name"].get<std::string>();
-			std::string ops_data = Application::SendCommand(fmt::format("cat {}/ops.nlohmann::json", Application::Get()->m_RemoteScreenLocation));
-			nlohmann::json ops = nlohmann::json::parse(ops_data);
-
-			bool found = false;
-			for (int i = 0; i < ops.size(); i++)
-			{
-				if (ops[i]["name"].get<std::string>() == username)
-				{
-					found = true;
-					break;
-				}
-			}
-
-			if (found)
-				DeOP(username, event);
-			else
-				OP(username, event);
-		}
-		else
-		{
-			event.edit_original_response(
-				dpp::message().add_embed(
-					dpp::embed().
-					set_color(dpp::colors::red).
-					set_title("Account not whitelisted!").
-					set_description("Can't execute this command as you can't connect anyway!")
-				)
-			);
-		}
-	}
-	else
+	if (!Utility::IsServerRunning())
 	{
 		event.edit_original_response(
 			dpp::message().add_embed(
 				dpp::embed().
 				set_color(dpp::colors::red).
-				set_title("Server is not running!").
-				set_description("Can't execute this command as the server is not reachable!")
+				set_title("Server ist inaktiv!").
+				set_description("Der Befehl kann nicht ausgeführt werden, da der Server inaktiv ist.")
 			)
 		);
+		return;
 	}
+
+	uint64_t account_id = static_cast<uint64_t>(event.command.get_issuing_user().id);
+
+	std::string username;
+	bool is_known = false;
+	bool is_operator = false;
+
+	std::vector<Operator> operators = Utility::GetServerOperators();
+	std::vector<DiscordUser> users = Utility::GetKnownUsers();
+
+	for (size_t i = 0; i < users.size(); i++)
+	{
+		if (users[i].DiscordId == account_id)
+		{
+			username = users[i].MinecraftName;
+			is_known = true;
+			break;
+		}
+	}
+
+	if (!is_known)
+	{
+		event.edit_original_response(
+			dpp::message().add_embed(
+				dpp::embed().
+				set_color(dpp::colors::red).
+				set_title("Account ist nicht bekannt!").
+				set_description("Der Befehl kann nicht ausgeführt werden, da der Account nicht auf der Whitelist steht.")
+			)
+		);
+		return;
+	}
+
+	for (size_t i = 0; i < operators.size(); i++)
+	{
+		if (operators[i].Name == username)
+		{
+			is_operator = true;
+			break;
+		}
+	}
+
+	if (is_operator)
+	{
+		Utility::SendMinecraftCommand(fmt::format("op {0}", username));
+	}
+	else
+	{
+		Utility::SendMinecraftCommand(fmt::format("deop {0}", username));
+	}
+
+	event.edit_original_response(
+		dpp::message().add_embed(
+			dpp::embed().
+			set_color(dpp::colors::green).
+			set_title("Befehl übertragen!").
+			set_description("Der Server wird den Befehl so bald wie möglich ausführen.")
+		)
+	);
 }
