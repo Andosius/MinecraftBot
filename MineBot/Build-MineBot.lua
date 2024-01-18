@@ -48,18 +48,18 @@ project "MineBot"
 
 
     -- Cross platform settings
-        filter "configurations:Debug"
+    filter "configurations:Debug"
         defines { "DEBUG" }
 
     filter "configurations:Release"
         defines { "NDEBUG" }
 
     -- Windows
-        -- Configure Debug
+    -- Configure Debug
     filter { "system:windows", "configurations:Debug" }
         runtime "Debug"
         
-        buildoptions { "/bigobj", "/sdl", "/Zc:preprocessor", "/MP", "/Od", "/DEBUG" }
+        buildoptions { "/bigobj", "/sdl", "/Zc:preprocessor", "/MP", "/Od", "/DEBUG", "/utf-8" }
         linkoptions { "/DEBUG" }
         defines { "DEBUG" }
 
