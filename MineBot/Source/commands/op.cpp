@@ -1,9 +1,12 @@
-// Local dependencies
+ï»¿// Local dependencies
 #include "commands/op.hpp"
 #include "CommandMutex.hpp"
+#include "Utility.hpp"
 
 // External dependencies
-
+#pragma warning(push, 0)
+#include <fmt/format.h>
+#pragma warning(pop)
 // Standard Library
 
 //======================================
@@ -22,7 +25,7 @@ void op_handler(dpp::cluster& bot, const dpp::slashcommand_t& event)
 				dpp::embed().
 				set_color(dpp::colors::red).
 				set_title("Server ist inaktiv!").
-				set_description("Der Befehl kann nicht ausgeführt werden, da der Server inaktiv ist.")
+				set_description("Der Befehl kann nicht ausgefÃ¼hrt werden, da der Server inaktiv ist.")
 			)
 		);
 		return;
@@ -54,7 +57,7 @@ void op_handler(dpp::cluster& bot, const dpp::slashcommand_t& event)
 				dpp::embed().
 				set_color(dpp::colors::red).
 				set_title("Account ist nicht bekannt!").
-				set_description("Der Befehl kann nicht ausgeführt werden, da der Account nicht auf der Whitelist steht.")
+				set_description("Der Befehl kann nicht ausgefÃ¼hrt werden, da der Account nicht auf der Whitelist steht.")
 			)
 		);
 		return;
@@ -82,8 +85,8 @@ void op_handler(dpp::cluster& bot, const dpp::slashcommand_t& event)
 		dpp::message().add_embed(
 			dpp::embed().
 			set_color(dpp::colors::green).
-			set_title("Befehl übertragen!").
-			set_description("Der Server wird den Befehl so bald wie möglich ausführen.")
+			set_title("Befehl Ã¼bertragen!").
+			set_description("Der Server wird den Befehl so bald wie mÃ¶glich ausfÃ¼hren.")
 		)
 	);
 }

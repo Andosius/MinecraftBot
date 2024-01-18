@@ -1,7 +1,7 @@
-#pragma once
+﻿#pragma once
 
 // Local dependencies
-#include "Config.hpp"
+
 
 // External dependencies
 #pragma warning(push, 0)
@@ -9,7 +9,7 @@
 #pragma warning(pop)
 
 // Standard Library
-#include <memory>
+
 
 //======================================
 

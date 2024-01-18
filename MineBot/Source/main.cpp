@@ -1,4 +1,4 @@
-// Local dependencies
+﻿// Local dependencies
 #include "Application.hpp"
 
 // External dependencies

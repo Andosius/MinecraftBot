@@ -1,8 +1,12 @@
-// Local dependencies
+ï»¿// Local dependencies
 #include "commands/blocker.hpp"
 #include "CommandMutex.hpp"
+#include "Utility.hpp"
 
 // External dependencies
+#pragma warning(push, 0)
+#include <fmt/format.h>
+#pragma warning(pop)
 
 // Standard Library
 
@@ -43,7 +47,7 @@ void blocker_handler(dpp::cluster& bot, const dpp::slashcommand_t& event)
 			dpp::message().add_embed(
 				dpp::embed().
 				set_color(dpp::colors::green).
-				set_title("Blocker-Übersicht").
+				set_title("Blocker-Ãœbersicht").
 				set_description(answer)
 			)
 		);
@@ -61,7 +65,7 @@ void blocker_handler(dpp::cluster& bot, const dpp::slashcommand_t& event)
 				add_embed(
 					dpp::embed().
 					set_color(dpp::colors::red).
-					set_title("Blocker kann nicht hinzugefügt werden!").
+					set_title("Blocker kann nicht hinzugefÃ¼gt werden!").
 					set_description("Der Grund darf nicht leer sein.")
 				)
 			);
@@ -75,8 +79,8 @@ void blocker_handler(dpp::cluster& bot, const dpp::slashcommand_t& event)
 			add_embed(
 				dpp::embed().
 				set_color(dpp::colors::green).
-				set_title("Blocker hinzugefügt!").
-				set_description(fmt::format("Der Blocker \"{}\" wurde hinzugefügt.", reason))
+				set_title("Blocker hinzugefÃ¼gt!").
+				set_description(fmt::format("Der Blocker \"{}\" wurde hinzugefÃ¼gt.", reason))
 			)
 		);
 		return;

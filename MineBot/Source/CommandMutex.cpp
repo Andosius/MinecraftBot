@@ -1,4 +1,4 @@
-// Local dependencies
+﻿// Local dependencies
 #include "CommandMutex.hpp"
 
 // External dependencies

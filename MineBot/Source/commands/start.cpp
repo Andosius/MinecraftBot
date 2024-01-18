@@ -1,10 +1,16 @@
-// Local dependencies
+﻿// Local dependencies
 #include "commands/start.hpp"
 #include "CommandMutex.hpp"
+#include "Utility.hpp"
 
 // External dependencies
+#pragma warning(push, 0)
+#include <fmt/format.h>
+#pragma warning(pop)
 
 // Standard Library
+#include <mutex>
+#include <chrono>
 
 //======================================
 
@@ -24,7 +30,7 @@ void start_handler(dpp::cluster& bot, const dpp::slashcommand_t& event)
 			dpp::message().add_embed(
 				dpp::embed().
 				set_color(dpp::colors::red).
-				set_title("Server l�uft bereits!").
+				set_title("Server läuft bereits!").
 				set_description("Der Server kann nicht gestartet werden, da dieser bereits aktiv ist.")
 			)
 		);

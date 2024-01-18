@@ -1,9 +1,13 @@
-// Local dependencies
+﻿// Local dependencies
 #include "commands/ping.hpp"
 
 // External dependencies
+#pragma warning(push, 0)
+#include <fmt/format.h>
+#pragma warning(pop)
 
 // Standard Library
+
 
 //======================================
 

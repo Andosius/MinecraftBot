@@ -1,10 +1,16 @@
-// Local dependencies
+Ôªø// Local dependencies
 #include "commands/whitelist.hpp"
 #include "CommandMutex.hpp"
+#include "Utility.hpp"
 
 // External dependencies
+#pragma warning(push, 0)
+#include <fmt/format.h>
+#pragma warning(pop)
 
 // Standard Library
+#include <mutex>
+#include <fstream>
 
 //======================================
 
@@ -21,7 +27,7 @@ void whitelist_handler(dpp::cluster& bot, const dpp::slashcommand_t& event)
 				dpp::embed().
 				set_color(dpp::colors::red).
 				set_title("Server ist inaktiv!").
-				set_description("Der Befehl kann nicht ausgef¸hrt werden, da der Server inaktiv ist.")
+				set_description("Der Befehl kann nicht ausgef√ºhrt werden, da der Server inaktiv ist.")
 			)
 		);
 		return;
@@ -50,7 +56,7 @@ void whitelist_handler(dpp::cluster& bot, const dpp::slashcommand_t& event)
 					dpp::embed().
 					set_color(dpp::colors::red).
 					set_title("Whitelist-Vorgang fehlgeschlagen!").
-					set_description(fmt::format("Der Name \"{}\" enth‰lt nicht zul‰ssige Zeichen.", username))
+					set_description(fmt::format("Der Name \"{}\" enth√§lt nicht zul√§ssige Zeichen.", username))
 				)
 			);
 			return;

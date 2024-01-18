@@ -1,4 +1,4 @@
-// Local dependencies
+﻿// Local dependencies
 #include "Utility.hpp"
 #include "Config.hpp"
 #include "Log.hpp"
@@ -6,7 +6,9 @@
 // External dependencies
 #define LIBSSH_STATIC 1
 #define SSH_NO_CPP_EXCEPTIONS
+#pragma warning(push, 0)
 #include <libssh/libsshpp.hpp>
+#pragma warning(pop)
 
 // Standard Library
 #include <vector>

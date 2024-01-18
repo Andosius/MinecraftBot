@@ -1,7 +1,6 @@
-#pragma once
+﻿#pragma once
 
 // Local dependencies
-
 
 
 // External dependencies

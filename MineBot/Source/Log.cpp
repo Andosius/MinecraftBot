@@ -1,7 +1,5 @@
+﻿// Local dependencies
 #include "Log.hpp"
-
-// Local dependencies
-
 
 // External dependencies
 #pragma warning(push, 0)
@@ -10,6 +8,7 @@
 #pragma warning(pop)
 
 // Standard Library
+
 
 //======================================
 

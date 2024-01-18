@@ -1,4 +1,4 @@
-// Local dependencies
+﻿// Local dependencies
 #include "Core.hpp"
 #include "Log.hpp"
 #include "Config.hpp"
