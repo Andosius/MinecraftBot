@@ -23,6 +23,13 @@ struct Operator
 	bool BypassesPlayerLimit;
 
 	Operator() = default;
+
+	inline bool IsValid() { return UUID != ""; }
+
+	bool operator==(Operator& u2)
+	{
+		return this->UUID == u2.UUID && this->Name == u2.Name && this->Level == u2.Level && this->BypassesPlayerLimit == u2.BypassesPlayerLimit;
+	}
 };
 
 inline void to_json(json& j, const Operator& o)

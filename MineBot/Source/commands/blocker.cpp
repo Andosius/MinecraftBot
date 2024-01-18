@@ -113,7 +113,7 @@ void blocker_handler(dpp::cluster& bot, const dpp::slashcommand_t& event)
 				dpp::message().
 				add_embed(
 					dpp::embed().
-					set_color(dpp::colors::green).
+					set_color(dpp::colors::red).
 					set_title("Blocker kann nicht entfernt werden!").
 					set_description(fmt::format("Der Blocker an der Stelle {} existiert nicht.", (number + 1)))
 				)

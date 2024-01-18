@@ -33,24 +33,9 @@ void op_handler(dpp::cluster& bot, const dpp::slashcommand_t& event)
 
 	uint64_t account_id = static_cast<uint64_t>(event.command.get_issuing_user().id);
 
-	std::string username;
-	bool is_known = false;
-	bool is_operator = false;
 
-	std::vector<Operator> operators = Utility::GetServerOperators();
-	std::vector<DiscordUser> users = Utility::GetKnownUsers();
-
-	for (size_t i = 0; i < users.size(); i++)
-	{
-		if (users[i].DiscordId == account_id)
-		{
-			username = users[i].MinecraftName;
-			is_known = true;
-			break;
-		}
-	}
-
-	if (!is_known)
+	DiscordUser user = Utility::GetKnownDiscordUserByAccountID(account_id);
+	if (!user.IsValid())
 	{
 		event.edit_original_response(
 			dpp::message().add_embed(
@@ -63,30 +48,30 @@ void op_handler(dpp::cluster& bot, const dpp::slashcommand_t& event)
 		return;
 	}
 
-	for (size_t i = 0; i < operators.size(); i++)
+	Operator op = Utility::GetMinecraftOperatorByUsername(user.MinecraftName);
+	if (!op.IsValid())
 	{
-		if (operators[i].Name == username)
-		{
-			is_operator = true;
-			break;
-		}
+		Utility::SendMinecraftCommand(fmt::format("op {0}", user.MinecraftName));
+		event.edit_original_response(
+			dpp::message().add_embed(
+				dpp::embed().
+				set_color(dpp::colors::green).
+				set_title("Befehl übertragen!").
+				set_description("Der Server wird dich der Operator Rolle hinzufügen.")
+			)
+		);
+		return;
 	}
 
-	if (is_operator)
-	{
-		Utility::SendMinecraftCommand(fmt::format("op {0}", username));
-	}
-	else
-	{
-		Utility::SendMinecraftCommand(fmt::format("deop {0}", username));
-	}
 
+	Utility::SendMinecraftCommand(fmt::format("deop {0}", user.MinecraftName));
 	event.edit_original_response(
 		dpp::message().add_embed(
 			dpp::embed().
 			set_color(dpp::colors::green).
 			set_title("Befehl übertragen!").
-			set_description("Der Server wird den Befehl so bald wie möglich ausführen.")
+			set_description("Der Server wird dich der Operator Rolle entfernen.")
 		)
 	);
+	return;
 }

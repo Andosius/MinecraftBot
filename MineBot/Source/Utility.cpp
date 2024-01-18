@@ -186,12 +186,24 @@ WhitelistUser Utility::GetMinecraftPlayerByUUID(const std::string& uuid)
 	return WhitelistUser();
 }
 
+Operator Utility::GetMinecraftOperatorByUsername(const std::string& name)
+{
+	std::vector<Operator> operators = GetServerOperators();
+
+	for (size_t i = 0; i < operators.size(); i++)
+	{
+		if (operators[i].Name == name)
+			return operators[i];
+	}
+	return Operator();
+}
+
 void Utility::AddDiscordUserToCache(const DiscordUser du)
 {
 	std::vector<DiscordUser> users = GetKnownUsers();
 	users.push_back(du);
 
-	std::ofstream accounts("accounts.json", std::ios_base::app);
+	std::ofstream accounts("accounts.json", std::ios_base::trunc);
 
 	json j = users;
 	std::string data = j.dump();
@@ -212,7 +224,7 @@ void Utility::RemoveDiscordUserFromCache(const DiscordUser du)
 		}
 	}
 
-	std::ofstream accounts("accounts.json", std::ios_base::app);
+	std::ofstream accounts("accounts.json", std::ios_base::trunc);
 
 	json j = users;
 	std::string data = j.dump();

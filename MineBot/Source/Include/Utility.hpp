@@ -40,6 +40,8 @@ public:
 	static WhitelistUser GetMinecraftPlayerByUsername(const std::string& name);
 	static WhitelistUser GetMinecraftPlayerByUUID(const std::string& uuid);
 
+	static Operator GetMinecraftOperatorByUsername(const std::string& name);
+
 	static void AddDiscordUserToCache(const DiscordUser du);
 	static void RemoveDiscordUserFromCache(const DiscordUser du);
 };

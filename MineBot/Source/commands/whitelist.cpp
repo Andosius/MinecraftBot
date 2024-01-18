@@ -41,7 +41,7 @@ void whitelist_handler(dpp::cluster& bot, const dpp::slashcommand_t& event)
 	std::string action = subcommand.name;
 
 
-	uint64_t account_id = (uint64_t)event.command.get_issuing_user().id;
+	uint64_t account_id = static_cast<uint64_t>(event.command.get_issuing_user().id);
 
 
 	if (action == "add")
@@ -62,7 +62,7 @@ void whitelist_handler(dpp::cluster& bot, const dpp::slashcommand_t& event)
 			return;
 		}
 
-		DiscordUser user = Utility::GetKnownDiscordUserByUsername(username);
+		DiscordUser user = Utility::GetKnownDiscordUserByAccountID(account_id);
 		if (user.IsValid())
 		{
 			event.edit_original_response(
@@ -70,7 +70,7 @@ void whitelist_handler(dpp::cluster& bot, const dpp::slashcommand_t& event)
 					dpp::embed().
 					set_color(dpp::colors::red).
 					set_title("Whitelist-Vorgang abgebrochen!").
-					set_description(fmt::format("Der Account \"{}\" ist bereits freigeschaltet.", username))
+					set_description(fmt::format("Der Account \"{}\" ist bereits über dich freigeschaltet.", user.MinecraftName))
 				)
 			);
 			return;
@@ -99,7 +99,7 @@ void whitelist_handler(dpp::cluster& bot, const dpp::slashcommand_t& event)
 					dpp::embed().
 					set_color(dpp::colors::red).
 					set_title("Whitelist-Vorgang abgebrochen!").
-					set_description("Dein Account ist mit keinem Minecraft Konto verbunden.")
+					set_description("Dein Account ist mit keinem Minecraft Account verbunden.")
 				)
 			);
 			return;
