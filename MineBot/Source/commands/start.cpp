@@ -38,28 +38,29 @@ void start_handler(dpp::cluster& bot, const dpp::slashcommand_t& event)
 	}
 
 
-	if (std::chrono::system_clock::now() >= s_StartAvailable)
+	if (std::chrono::system_clock::now() < s_StartAvailable)
 	{
-		s_StartAvailable = std::chrono::system_clock::now() + std::chrono::minutes(2);
-		Utility::SendCommand("systemctl start minecraft");
-
 		event.edit_original_response(
 			dpp::message().add_embed(
 				dpp::embed().
-				set_color(dpp::colors::green).
-				set_title("Server gestartet!").
-				set_description("Der Server wird gestartet.")
+				set_color(dpp::colors::yellow).
+				set_title("Server kann nicht gestartet werden!").
+				set_description("Der Befehl hat eine Abklingzeit von 2 Minuten.")
 			)
 		);
 		return;
 	}
-	
+
+
+	s_StartAvailable = std::chrono::system_clock::now() + std::chrono::minutes(2);
+	Utility::SendCommand("sudo systemctl start minecraft");
+
 	event.edit_original_response(
 		dpp::message().add_embed(
 			dpp::embed().
-			set_color(dpp::colors::yellow).
-			set_title("Server kann nicht gestartet werden!").
-			set_description("Der Befehl hat eine Abklingzeit von 2 Minuten.")
+			set_color(dpp::colors::green).
+			set_title("Server gestartet!").
+			set_description("Der Server wird gestartet.")
 		)
 	);
 	return;
