@@ -19,29 +19,28 @@
 //======================================
 
 
-class Utility
+namespace Utility
 {
-public:
-	static std::string SendCommand(const std::string& command);
-	static void SendMinecraftCommand(const std::string& command);
+	 std::string SendCommand(const std::string& command);
+	 void SendMinecraftCommand(const std::string& command);
 
-	static bool IsServerRunning();
+	 bool IsServerRunning();
 
-	static std::vector<Operator> GetServerOperators();
-	static std::vector<WhitelistUser> GetWhitelistedUsers();
-	static std::vector<DiscordUser> GetKnownUsers();
+	 std::vector<Operator> GetServerOperators();
+	 std::vector<WhitelistUser> GetWhitelistedUsers();
+	 std::vector<DiscordUser> GetKnownUsers();
 
-	static DiscordUser GetKnownDiscordUserByUsername(const std::string& name);
-	static DiscordUser GetKnownDiscordUserByAccountID(const uint64_t account_id);
+	 DiscordUser GetKnownDiscordUserByUsername(const std::string& name);
+	 DiscordUser GetKnownDiscordUserByAccountID(const uint64_t account_id);
 
-	static bool IsValidMinecraftName(const std::string& name);
-	static bool IsMinecraftPlayerWhitelisted(const std::string& name);
+	 bool IsValidMinecraftName(const std::string& name);
+	 bool IsMinecraftPlayerWhitelisted(const std::string& name);
 
-	static WhitelistUser GetMinecraftPlayerByUsername(const std::string& name);
-	static WhitelistUser GetMinecraftPlayerByUUID(const std::string& uuid);
+	 WhitelistUser GetMinecraftPlayerByUsername(const std::string& name);
+	 WhitelistUser GetMinecraftPlayerByUUID(const std::string& uuid);
 
-	static Operator GetMinecraftOperatorByUsername(const std::string& name);
+	 Operator GetMinecraftOperatorByUsername(const std::string& name);
 
-	static void AddDiscordUserToCache(const DiscordUser du);
-	static void RemoveDiscordUserFromCache(const DiscordUser du);
-};
+	 void AddDiscordUserToCache(const DiscordUser du);
+	 void RemoveDiscordUserFromCache(const DiscordUser du);
+}
