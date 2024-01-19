@@ -1,5 +1,8 @@
 # Ignore build and Binaries directory
-build/
-Binaries/
+build
+
+Binaries
+!Vendor/Binaries
 Vendor/vcpkg
+
 Dependencies/libssh
