@@ -16,14 +16,14 @@ using json = nlohmann::json;
 //======================================
 
 
-struct SSH
+struct SSHConfig
 {
 	std::string Hostname;
 	std::string Username;
 	std::string Password;
 };
 
-inline void to_json(json& j, const SSH& s)
+inline void to_json(json& j, const SSHConfig& s)
 {
 	j = json
 	{ 
@@ -33,7 +33,7 @@ inline void to_json(json& j, const SSH& s)
 	};
 }
 
-inline void from_json(const json& j, SSH& s)
+inline void from_json(const json& j, SSHConfig& s)
 {
 	j.at("Hostname").get_to(s.Hostname);
 	j.at("Username").get_to(s.Username);
@@ -46,7 +46,7 @@ struct Config
 	std::string Token;
 	std::string Directory;
 	std::string ScreenSessionName;
-	SSH SSH;
+	SSHConfig SSH;
 
 	Config() = default;
 
