@@ -31,3 +31,40 @@ void Config::LoadConfigurationFile()
 		LOG_ERROR(e.what());
 	}
 }
+
+void to_json(json& j, const SSHConfig& s)
+{
+	j = json
+	{
+		{"Hostname", s.Hostname},
+		{"Username", s.Username},
+		{"Password", s.Password}
+	};
+}
+
+void from_json(const json& j, SSHConfig& s)
+{
+	j.at("Hostname").get_to(s.Hostname);
+	j.at("Username").get_to(s.Username);
+	j.at("Password").get_to(s.Password);
+}
+
+void to_json(json& j, const Config& c)
+{
+	j = json
+	{
+		{"BotToken", c.Token},
+		{"Directory", c.Directory},
+		{"ScreenName", c.ScreenSessionName},
+		{"SSH", c.SSH},
+	};
+
+}
+
+void from_json(const json& j, Config& c)
+{
+	j.at("BotToken").get_to(c.Token);
+	j.at("Directory").get_to(c.Directory);
+	j.at("ScreenSessionName").get_to(c.ScreenSessionName);
+	j.at("SSH").get_to(c.SSH);
+}
