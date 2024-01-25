@@ -24,7 +24,7 @@ struct Operator
 
 	Operator() = default;
 
-	inline bool IsValid() { return UUID != ""; }
+	bool IsValid() const { return UUID != ""; }
 
 	bool operator==(Operator& u2)
 	{
@@ -32,22 +32,5 @@ struct Operator
 	}
 };
 
-inline void to_json(json& j, const Operator& o)
-{
-	j = json
-	{
-		{"uuid", o.UUID},
-		{"name", o.Name},
-		{"level", o.Level},
-		{"bypassesPlayerLimit", o.BypassesPlayerLimit}
-	};
-}
-
-inline void from_json(const json& j, Operator& o)
-{
-	j.at("uuid").get_to(o.UUID);
-	j.at("name").get_to(o.Name);
-	j.at("level").get_to(o.Level);
-	j.at("bypassesPlayerLimit").get_to(o.BypassesPlayerLimit);
-}
-
+void to_json(json& j, const Operator& o);
+void from_json(const json& j, Operator& o);

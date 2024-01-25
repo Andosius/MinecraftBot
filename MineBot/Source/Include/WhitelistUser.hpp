@@ -22,7 +22,7 @@ struct WhitelistUser
 
 	WhitelistUser() = default;
 
-	inline bool IsValid() { return UUID != ""; }
+	bool IsValid() const { return UUID != ""; }
 
 	bool operator==(WhitelistUser& u2)
 	{
@@ -30,18 +30,5 @@ struct WhitelistUser
 	}
 };
 
-inline void to_json(json& j, const WhitelistUser& wu)
-{
-	j = json
-	{
-		{"uuid", wu.UUID},
-		{"name", wu.MinecraftName},
-	};
-}
-
-inline void from_json(const json& j, WhitelistUser& wu)
-{
-	j.at("uuid").get_to(wu.UUID);
-	j.at("name").get_to(wu.MinecraftName);
-}
-
+void to_json(json& j, const WhitelistUser& wu);
+void from_json(const json& j, WhitelistUser& wu);
