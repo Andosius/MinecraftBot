@@ -132,7 +132,7 @@ namespace Utility
 	bool IsMinecraftPlayerWhitelisted(const std::string& name)
 	{
 		std::vector< WhitelistUser> users = GetWhitelistedUsers();
-		for (WhitelistUser& user : users)
+		for (const WhitelistUser& user : users)
 		{
 			if (user.MinecraftName == name)
 				return true;
@@ -144,10 +144,10 @@ namespace Utility
 	{
 		std::vector<DiscordUser> users = GetKnownUsers();
 
-		for (size_t i = 0; i < users.size(); i++)
+		for (const auto& user : users)
 		{
-			if (users[i].MinecraftName == name)
-				return users[i];
+			if (user.MinecraftName == name)
+				return user;
 		}
 		return DiscordUser();
 	}
@@ -156,10 +156,10 @@ namespace Utility
 	{
 		std::vector<DiscordUser> users = GetKnownUsers();
 
-		for (size_t i = 0; i < users.size(); i++)
+		for (const auto& user : users)
 		{
-			if (users[i].DiscordId == account_id)
-				return users[i];
+			if (user.DiscordId == account_id)
+				return user;
 		}
 		return DiscordUser();
 	}
@@ -168,10 +168,10 @@ namespace Utility
 	{
 		std::vector<WhitelistUser> users = GetWhitelistedUsers();
 
-		for (size_t i = 0; i < users.size(); i++)
+		for (const auto& user : users)
 		{
-			if (users[i].MinecraftName == name)
-				return users[i];
+			if (user.MinecraftName == name)
+				return user;
 		}
 		return WhitelistUser();
 	}
@@ -180,10 +180,10 @@ namespace Utility
 	{
 		std::vector<WhitelistUser> users = GetWhitelistedUsers();
 
-		for (size_t i = 0; i < users.size(); i++)
+		for (const auto& user : users)
 		{
-			if (users[i].UUID == uuid)
-				return users[i];
+			if (user.UUID == uuid)
+				return user;
 		}
 		return WhitelistUser();
 	}
@@ -192,15 +192,15 @@ namespace Utility
 	{
 		std::vector<Operator> operators = GetServerOperators();
 
-		for (size_t i = 0; i < operators.size(); i++)
+		for (const auto& user : operators)
 		{
-			if (operators[i].Name == name)
-				return operators[i];
+			if (user.Name == name)
+				return user;
 		}
 		return Operator();
 	}
 
-	void AddDiscordUserToCache(const DiscordUser du)
+	void AddDiscordUserToCache(const DiscordUser& du)
 	{
 		std::vector<DiscordUser> users = GetKnownUsers();
 		users.push_back(du);
@@ -213,7 +213,7 @@ namespace Utility
 		accounts.write(data.c_str(), data.size());
 	}
 
-	void RemoveDiscordUserFromCache(const DiscordUser du)
+	void RemoveDiscordUserFromCache(const DiscordUser& du)
 	{
 		std::vector<DiscordUser> users = GetKnownUsers();
 

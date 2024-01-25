@@ -41,6 +41,6 @@ namespace Utility
 
 	 Operator GetMinecraftOperatorByUsername(const std::string& name);
 
-	 void AddDiscordUserToCache(const DiscordUser du);
-	 void RemoveDiscordUserFromCache(const DiscordUser du);
+	 void AddDiscordUserToCache(const DiscordUser& du);
+	 void RemoveDiscordUserFromCache(const DiscordUser& du);
 }
