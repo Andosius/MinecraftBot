@@ -1,19 +1,14 @@
 ﻿#pragma once
 
 // Local dependencies
-#include "Application.hpp"
 #include "Operator.hpp"
 #include "DiscordUser.hpp"
 #include "WhitelistUser.hpp"
 
 // External dependencies
-#pragma warning(push, 0)
-#include <fmt/format.h>
-#include <nlohmann/json.hpp>
-#pragma warning(pop)
+
 
 // Standard Library
-#include <regex>
 #include <string>
 
 //======================================
