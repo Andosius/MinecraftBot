@@ -32,9 +32,11 @@ void blocker_handler(dpp::cluster& bot, const dpp::slashcommand_t& event)
 
 		if (s_Blockers.size() > 0)
 		{
-			for (size_t i = 0; i < s_Blockers.size(); i++)
+			size_t counter = 0;
+			for (const auto& blocker : s_Blockers)
 			{
-				answer += fmt::format("{0:>2} -> Grund: {1}\n", (i + 1), s_Blockers[i]);
+				answer += fmt::format("{0:>2} -> Grund: {1}\n", (counter + 1), blocker);
+				counter++;
 			}
 
 			answer += "\n\n";
