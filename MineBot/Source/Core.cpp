@@ -59,7 +59,7 @@ void Core::RegisterCallbacks()
 			{
 				std::vector<dpp::slashcommand> slash_commands;
 
-				for (auto& command : BotCommands)
+				for (const auto& command : BotCommands)
 				{
 					dpp::slashcommand c;
 					c.set_name(command.first).
