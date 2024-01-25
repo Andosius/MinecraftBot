@@ -4,20 +4,43 @@
 #include "Log.hpp"
 
 // External dependencies
-#define LIBSSH_STATIC 1
-#define SSH_NO_CPP_EXCEPTIONS
+#ifdef USE_CONSOLE_ONLY
+	#if defined(_WIN32) || defined(_WIN64)
+		#define pclose	_pclose
+		#define popen	_popen
+	#endif
+#else // USE_CONSOLE_ONLY
+	#define LIBSSH_STATIC 1
+	#define SSH_NO_CPP_EXCEPTIONS
+
+	#pragma warning(push, 0)
+	#include <libssh/libsshpp.hpp>
+	#pragma warning(pop)
+#endif // USE_CONSOLE_ONLY
+
 #pragma warning(push, 0)
-#include <libssh/libsshpp.hpp>
+#include <fmt/format.h>
+#include <nlohmann/json.hpp>
 #pragma warning(pop)
 
 // Standard Library
 #include <vector>
 #include <fstream>
+#include <regex>
+
+#ifdef USE_CONSOLE_ONLY
+	#include <cstdio>
+	#include <memory>
+	#include <array>
+	#include <string>
+#endif // USE_CONSOLE_ONLY
 
 //======================================
 
+
 namespace Utility
 {
+#ifndef USE_CONSOLE_ONLY
 	std::string SendCommand(const std::string& command)
 	{
 		ssh::Session session;
@@ -71,6 +94,28 @@ namespace Utility
 
 		return output;
 	}
+#else // USE_CONSOLE_ONLY is set
+	std::string SendCommand(const std::string& command)
+	{
+		std::array<char, 128> buffer;
+		std::string result;
+
+		std::unique_ptr<FILE, decltype(&pclose)> pipe(popen(command.c_str(), "r"), pclose);
+
+		if (!pipe)
+		{
+			LOG_CRITICAL("popen() failed! Message: {}", command);
+			return "";
+		}
+
+		while (fgets(buffer.data(), (int)buffer.size(), pipe.get()) != nullptr)
+		{
+			result += buffer.data();
+		}
+
+		return result;
+	}
+#endif // USE_CONSOLE_ONLY
 
 	void SendMinecraftCommand(const std::string& command)
 	{
@@ -234,38 +279,3 @@ namespace Utility
 		accounts.write(data.c_str(), data.size());
 	}
 }
-
-
-/*
-#include <cstdio>
-#include <iostream>
-#include <memory>
-#include <array>
-#include <string>
-
-#ifdef _WIN64
-#define pclose	_pclose
-#define popen	_popen
-#endif
-
-std::string Core::SendCommand(const std::string& command)
-{
-	std::array<char, 128> buffer;
-	std::string result;
-
-	std::unique_ptr<FILE, decltype(&pclose)> pipe(popen(command.c_str(), "r"), pclose);
-
-	if (!pipe)
-	{
-		LOG_CRITICAL("popen() failed! Message: {}", command);
-		return "";
-	}
-
-	while (fgets(buffer.data(), (int)buffer.size(), pipe.get()) != nullptr)
-	{
-		result += buffer.data();
-	}
-
-	return result;
-}
-*/
