@@ -6,6 +6,7 @@ IncludeDir = {}
 IncludeDir["spdlog"] = "../Dependencies/spdlog/include"
 IncludeDir["fmt"] = "../Dependencies/fmt/include"
 IncludeDir["json"] = "../Dependencies/nlohmann-json/single_include"
+IncludeDir["asio"] = "../Dependencies/asio-1.28.0/include"
 
 LibraryDir = {}
 

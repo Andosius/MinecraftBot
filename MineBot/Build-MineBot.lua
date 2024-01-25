@@ -21,6 +21,7 @@ project "MineBot"
         "%{IncludeDir.json}",
         "%{IncludeDir.dpp}",
         "%{IncludeDir.libssh}",
+        "%{IncludeDir.asio}",
 		"Source/Include"
     }
 
@@ -32,7 +33,8 @@ project "MineBot"
         "DPP_USE_EXTERNAL_JSON",
 		"FD_SETSIZE=1024",
         "JSON_USE_GLOBAL_UDLS=0",
-        "JSON_USE_IMPLICIT_CONVERSIONS=0"
+        "JSON_USE_IMPLICIT_CONVERSIONS=0",
+        "ASIO_STANDALONE"
     }
 
     -- Libraries
@@ -75,7 +77,7 @@ project "MineBot"
     filter { "system:windows" }
         postbuildcommands {
             "{COPYFILE} %[%{BinaryDir.dpp}/**] %[%{!cfg.targetdir}]",
-            "{COPYFILE} %[%{BinaryDir.libssh}/**] %[%{!cfg.targetdir}]"
+            --"{COPYFILE} %[%{BinaryDir.libssh}/**] %[%{!cfg.targetdir}]"
         }
     
     -- Linux & macOS
