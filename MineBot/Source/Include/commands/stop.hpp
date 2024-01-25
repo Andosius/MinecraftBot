@@ -13,5 +13,9 @@
 
 //======================================
 
-
+/**
+* @brief The stop command handler.
+*
+* Stops the minecraft server.
+*/
 void stop_handler(dpp::cluster& bot, const dpp::slashcommand_t& event);

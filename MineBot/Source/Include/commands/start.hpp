@@ -13,5 +13,9 @@
 
 //======================================
 
-
+/**
+* @brief The start command handler.
+* 
+* Starts the minecraft server.
+*/
 void start_handler(dpp::cluster& bot, const dpp::slashcommand_t& event);

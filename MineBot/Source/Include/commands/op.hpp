@@ -13,5 +13,9 @@
 
 //======================================
 
-
+/**
+* @brief The op command handler.
+* 
+* Sends the op command based on registration-level (whitelisted).
+*/
 void op_handler(dpp::cluster& bot, const dpp::slashcommand_t& event);
