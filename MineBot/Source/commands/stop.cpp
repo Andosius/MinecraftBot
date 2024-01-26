@@ -38,7 +38,7 @@ void stop_handler(dpp::cluster& bot, const dpp::slashcommand_t& event)
 	}
 
 
-	if (std::chrono::system_clock::now() >= s_StopAvailable)
+	if (std::chrono::system_clock::now() < s_StopAvailable)
 	{
 		event.edit_original_response(
 			dpp::message().add_embed(
