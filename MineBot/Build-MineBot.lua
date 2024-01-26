@@ -86,3 +86,30 @@ project "MineBot"
 
     filter { "system:not windows", "configurations:Release" }
         buildoptions { "-pthread", "-fPIC", "-O3" }
+
+    filter{}
+    vpaths {
+        ["Commands"] = { 
+            "Source/commands/*.cpp", "Source/Include/commands/*.hpp",
+            "Source/CommandMutex.cpp", "Source/Include/CommandMutex.hpp",
+            "Source/Include/command.hpp", "Source/Include/Commands.hpp"
+        },
+        ["Models"] = { 
+            "Source/Operator.cpp", "Source/Include/Operator.hpp",
+            "Source/WhitelistUser.cpp", "Source/Include/WhitelistUser.hpp",
+            "Source/DiscordUser.cpp", "Source/Include/DiscordUser.hpp",
+            "Source/Config.cpp", "Source/Include/Config.hpp"
+        },
+        ["Utility"] = {
+            "Source/Log.cpp", "Source/Include/Log.hpp",
+            "Source/Utility.cpp", "Source/Include/Utility.hpp"
+        },
+        ["Networking"] = {
+            "Source/SourceRcon.cpp", "Source/Include/SourceRcon.hpp"
+        },
+        ["Core"] = {
+            "Source/Application.cpp", "Source/Include/Application.hpp",
+            "Source/Core.cpp", "Source/Include/Core.hpp",
+            "Source/main.cpp"
+        }
+    }
