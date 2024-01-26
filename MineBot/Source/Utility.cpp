@@ -2,6 +2,7 @@
 #include "Utility.hpp"
 #include "Config.hpp"
 #include "Log.hpp"
+#include "SourceRcon.hpp"
 
 // External dependencies
 #ifdef USE_CONSOLE_ONLY
@@ -119,7 +120,12 @@ namespace Utility
 
 	void SendMinecraftCommand(const std::string& command)
 	{
-		SendCommand(fmt::format("/usr/bin/screen -p 0 -S {0} -X eval 'stuff \"{1}\"\\015'", AppSettings->ScreenSessionName, command));
+		SourceRcon rcon = SourceRcon(AppSettings->RCON.Hostname, AppSettings->RCON.Port, AppSettings->RCON.Password);
+		if (rcon.Connect() && rcon.Authenticate())
+		{
+			rcon.SendCommand(command);
+		}
+		//SendCommand(fmt::format("/usr/bin/screen -p 0 -S {0} -X eval 'stuff \"{1}\"\\015'", AppSettings->ScreenSessionName, command));
 	}
 
 	bool IsServerRunning()

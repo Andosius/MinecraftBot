@@ -49,6 +49,23 @@ void from_json(const json& j, SSHConfig& s)
 	j.at("Password").get_to(s.Password);
 }
 
+void to_json(json& j, const RCONConfig& r)
+{
+	j = json
+	{
+		{"Hostname", r.Hostname},
+		{"Port", r.Port},
+		{"Password", r.Password}
+	};
+}
+
+void from_json(const json& j, RCONConfig& r)
+{
+	j.at("Hostname").get_to(r.Hostname);
+	j.at("Port").get_to(r.Port);
+	j.at("Password").get_to(r.Password);
+}
+
 void to_json(json& j, const Config& c)
 {
 	j = json

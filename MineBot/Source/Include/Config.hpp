@@ -23,12 +23,20 @@ struct SSHConfig
 	std::string Password;
 };
 
+struct RCONConfig
+{
+	std::string Hostname;
+	std::string Port;
+	std::string Password;
+};
+
 struct Config
 {
 	std::string Token;
 	std::string Directory;
 	std::string ScreenSessionName;
 	SSHConfig SSH;
+	RCONConfig RCON;
 
 	Config() = default;
 
@@ -38,6 +46,9 @@ struct Config
 
 void to_json(json& j, const SSHConfig& s);
 void from_json(const json& j, SSHConfig& s);
+
+void to_json(json& j, const RCONConfig& r);
+void from_json(const json& j, RCONConfig& r);
 
 void to_json(json& j, const Config& c);
 void from_json(const json& j, Config& c);
