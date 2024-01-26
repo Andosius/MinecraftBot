@@ -142,9 +142,9 @@ bool SourceRcon::TransferPacket(SourceRconPacket& pak)
 	// Change from big to little endian if needed
 	if (m_IsBigEndian)
 	{
-		pak.Size = static_cast<int32_t>(_byteswap_ulong(pak.Size));
-		pak.Id = static_cast<int32_t>(_byteswap_ulong(pak.Id));
-		pak.Type = static_cast<int32_t>(_byteswap_ulong(pak.Type));
+		pak.Size = static_cast<int32_t>(bswap_32(pak.Size));
+		pak.Id = static_cast<int32_t>(bswap_32(pak.Id));
+		pak.Type = static_cast<int32_t>(bswap_32(pak.Type));
 	}
 
 	// Push data to char* buffer
@@ -211,9 +211,9 @@ SourceRconPacket SourceRcon::ReceivePacket()
 	// Transform to big endian if needed
 	if (m_IsBigEndian)
 	{
-		pak.Size = static_cast<int32_t>(_byteswap_ulong(pak.Size));
-		pak.Id = static_cast<int32_t>(_byteswap_ulong(pak.Id));
-		pak.Type = static_cast<int32_t>(_byteswap_ulong(pak.Type));
+		pak.Size = static_cast<int32_t>(bswap_32(pak.Size));
+		pak.Id = static_cast<int32_t>(bswap_32(pak.Id));
+		pak.Type = static_cast<int32_t>(bswap_32(pak.Type));
 	}
 
 	// Read command body
