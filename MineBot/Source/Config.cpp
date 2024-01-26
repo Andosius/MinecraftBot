@@ -74,6 +74,7 @@ void to_json(json& j, const Config& c)
 		{"Directory", c.Directory},
 		{"ScreenName", c.ScreenSessionName},
 		{"SSH", c.SSH},
+		{"RCON", c.RCON},
 	};
 
 }
@@ -84,4 +85,5 @@ void from_json(const json& j, Config& c)
 	j.at("Directory").get_to(c.Directory);
 	j.at("ScreenSessionName").get_to(c.ScreenSessionName);
 	j.at("SSH").get_to(c.SSH);
+	j.at("RCON").get_to(c.RCON);
 }
