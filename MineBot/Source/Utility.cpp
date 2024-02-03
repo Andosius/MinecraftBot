@@ -138,6 +138,16 @@ namespace Utility
 		return true;
 	}
 
+	void ShutdownMinecraftServer()
+	{
+		SourceRcon rcon = SourceRcon(AppSettings->RCON.Hostname, AppSettings->RCON.Port, AppSettings->RCON.Password);
+		if (rcon.Connect() && rcon.Authenticate())
+		{
+			rcon.SendCommand("save-all");
+			rcon.SendCommand("stop");
+		}
+	}
+
 	std::vector<Operator> GetServerOperators()
 	{
 		std::string content = SendCommand(fmt::format("cat {0}/ops.json", AppSettings->Directory));

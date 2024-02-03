@@ -53,7 +53,7 @@ void stop_handler(dpp::cluster& bot, const dpp::slashcommand_t& event)
 
 
 	s_StopAvailable = std::chrono::system_clock::now() + std::chrono::minutes(2);
-	Utility::SendCommand("sudo systemctl stop minecraft");
+	Utility::ShutdownMinecraftServer();
 
 	event.edit_original_response(
 		dpp::message().add_embed(

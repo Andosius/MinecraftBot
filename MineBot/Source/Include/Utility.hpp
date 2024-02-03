@@ -20,6 +20,7 @@ namespace Utility
 	 void SendMinecraftCommand(const std::string& command);
 
 	 bool IsServerRunning();
+	 void ShutdownMinecraftServer();
 
 	 std::vector<Operator> GetServerOperators();
 	 std::vector<WhitelistUser> GetWhitelistedUsers();
