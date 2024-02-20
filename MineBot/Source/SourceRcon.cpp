@@ -122,15 +122,9 @@ std::string SourceRcon::SendCommand(const std::string& command)
 	request.Command = command;
 	TransferPacket(request);
 
-	// Send empty special packet for possible multi-packet responses
-	SourceRconPacket special{};
-	request.Type = SourceRconMessageType::SERVERDATA_RESPONSE_VALUE;
-	request.Command = "";
-	TransferPacket(special);
-
 	// Get result
 	SourceRconPacket result = ReceivePacket();
-	while(!result.Last)
+	while(result.Size == 4096 - 14)
 	{
 		result = ReceivePacket();
 		output += result.Command;
@@ -286,27 +280,8 @@ SourceRconPacket SourceRcon::ReceivePacket()
 		return pak;
 	}
 
-	// Check if packet is the last one
-	if (pak.Size == 8)
-	{
-		constexpr char expectedBytes[8] = { 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00 };
-		int matching = 0;
-
-		for (int i = 0; i < 8; i++)
-		{
-			if (buffer[0xC + i] == expectedBytes[i])
-			{
-				matching++;
-			}
-		}
-
-		pak.Last = matching == 8;
-	}
-	else
-	{
-		// Set result and return packet
-		pak.Command = std::string(buffer + 0xC, pak.Size);
-	}
+	// Set result and return packet
+	pak.Command = std::string(buffer + 0xC, pak.Size);
 
 	return pak;
 }
