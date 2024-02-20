@@ -54,6 +54,7 @@ struct SourceRconPacket
 	int32_t Id;
 	int32_t Type;
 	std::string Command;
+	bool Last = false;
 };
 
 

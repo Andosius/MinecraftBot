@@ -122,13 +122,19 @@ std::string SourceRcon::SendCommand(const std::string& command)
 	request.Command = command;
 	TransferPacket(request);
 
+	// Send empty special packet for possible multi-packet responses
+	SourceRconPacket special{};
+	request.Type = SourceRconMessageType::SERVERDATA_RESPONSE_VALUE;
+	request.Command = "";
+	TransferPacket(special);
+
 	// Get result
-	SourceRconPacket result{};
-	do
+	SourceRconPacket result = ReceivePacket();
+	while(!result.Last)
 	{
 		result = ReceivePacket();
 		output += result.Command;
-	} while (result.Size >= (4096 - 14)); // Max packet - min packet size
+	}
 
 	return output;
 }
@@ -151,6 +157,7 @@ bool SourceRcon::Authenticate()
 	SourceRconPacket request{};
 	request.Type = SourceRconMessageType::SERVERDATA_AUTH;
 	request.Command = m_Password;
+
 	if (TransferPacket(request))
 	{
 		SourceRconPacket result = ReceivePacket();
@@ -214,14 +221,14 @@ bool SourceRcon::TransferPacket(SourceRconPacket& pak)
 	// Wait for TIMEOUT (5 seconds)
 	asyncWait();
 
+	// Delete buffer
+	delete[] buffer;
+
 	// Check for errors
 	if (error)
 	{
-		delete[] buffer;
 		return false;
 	}
-
-	delete[] buffer;
 	return true;
 }
 
@@ -273,14 +280,33 @@ SourceRconPacket SourceRcon::ReceivePacket()
 
 	asyncWait();
 
-	// In case something goes wrong, return packet without command
+	// In case something goes wrong, return packet without result
 	if (error)
 	{
 		return pak;
 	}
 
-	// Set command and return packet
-	pak.Command = std::string(buffer + 0xC);
+	// Check if packet is the last one
+	if (pak.Size == 8)
+	{
+		constexpr char expectedBytes[8] = { 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00 };
+		int matching = 0;
+
+		for (int i = 0; i < 8; i++)
+		{
+			if (buffer[0xC + i] == expectedBytes[i])
+			{
+				matching++;
+			}
+		}
+
+		pak.Last = matching == 8;
+	}
+	else
+	{
+		// Set result and return packet
+		pak.Command = std::string(buffer + 0xC, pak.Size);
+	}
 
 	return pak;
 }
