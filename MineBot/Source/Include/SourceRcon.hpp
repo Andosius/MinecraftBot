@@ -50,10 +50,26 @@ enum SourceRconMessageType
 
 struct SourceRconPacket
 {
-	int32_t Size;
-	int32_t Id;
-	int32_t Type;
+	int32_t Size = -1;
+	int32_t Id = -1;
+	int32_t Type = -1;
 	std::string Command;
+
+	int32_t BufferSize = -1;
+
+	SourceRconPacket() = default;
+	SourceRconPacket(const int32_t id, const int32_t type, const std::string& command)
+	{
+		Id = id;
+		Type = type;
+		Command = command;
+
+		// 14 = 4 Size, 4 Id, 4 Type, 1 Body-'\0', 1 Packet-'\0'
+		BufferSize = 14 + static_cast<int32_t>(Command.size());
+
+		// Length of everything except Size itself
+		Size = BufferSize - 4;
+	}
 };
 
 

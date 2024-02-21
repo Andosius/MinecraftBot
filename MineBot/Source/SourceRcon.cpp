@@ -6,63 +6,16 @@
 
 // Local dependencies
 #include "SourceRcon.hpp"
-#include "Log.hpp"
+#include "Byteswap.hpp"
 
 // External dependencies
 
 
 // Standard Library
 #include <chrono>
-#include <stdlib.h>
+#include <iostream>
 
 //======================================
-
-
-#ifdef _MSC_VER
-
-#include <stdlib.h>
-#define bswap_32(x) _byteswap_ulong(x)
-#define bswap_64(x) _byteswap_uint64(x)
-
-#elif defined(__APPLE__)
-
-// Mac OS X / Darwin features
-#include <libkern/OSByteOrder.h>
-#define bswap_32(x) OSSwapInt32(x)
-#define bswap_64(x) OSSwapInt64(x)
-
-#elif defined(__sun) || defined(sun)
-
-#include <sys/byteorder.h>
-#define bswap_32(x) BSWAP_32(x)
-#define bswap_64(x) BSWAP_64(x)
-
-#elif defined(__FreeBSD__)
-
-#include <sys/endian.h>
-#define bswap_32(x) bswap32(x)
-#define bswap_64(x) bswap64(x)
-
-#elif defined(__OpenBSD__)
-
-#include <sys/types.h>
-#define bswap_32(x) swap32(x)
-#define bswap_64(x) swap64(x)
-
-#elif defined(__NetBSD__)
-
-#include <sys/types.h>
-#include <machine/bswap.h>
-#if defined(__BSWAP_RENAME) && !defined(__bswap_32)
-#define bswap_32(x) bswap32(x)
-#define bswap_64(x) bswap64(x)
-#endif
-
-#else
-
-#include <byteswap.h>
-
-#endif
 
 
 constexpr std::chrono::duration TIMEOUT = std::chrono::seconds(2);
@@ -77,6 +30,27 @@ bool IsBigEndian()
 
 	return bint.c[0] == 1;
 }
+
+bool IsLastMessage(const SourceRconPacket& pak)
+{
+	const char expectedBytes[] = { 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00 };
+
+	if (pak.Size != 8)
+	{
+		return false;
+	}
+
+	for (int i = 0; i < 8; i++)
+	{
+		if (pak.Command.data()[i] != expectedBytes[i])
+		{
+			return false;
+		}
+	}
+
+	return true;
+}
+
 
 
 SourceRcon::SourceRcon(const std::string& hostname, const std::string& port, const std::string& password)
@@ -116,19 +90,23 @@ std::string SourceRcon::SendCommand(const std::string& command)
 {
 	std::string output = "";
 
-	// Send command
-	SourceRconPacket request{};
-	request.Type = SourceRconMessageType::SERVERDATA_EXECCOMMAND;
-	request.Command = command;
+	// Command packet
+	SourceRconPacket request(m_Counter++, SourceRconMessageType::SERVERDATA_EXECCOMMAND, command);
+	// Verification packet
+	SourceRconPacket verification(request.Id, SourceRconMessageType::SERVERDATA_RESPONSE_VALUE , "");
+
 	TransferPacket(request);
+	TransferPacket(verification);
 
 	// Get result
 	SourceRconPacket result = ReceivePacket();
-	while(result.Size == 4096 - 14)
+	do
 	{
-		result = ReceivePacket();
 		output += result.Command;
-	}
+		result = ReceivePacket();
+	} while (!IsLastMessage(result));
+
+	std::cout << "Transaction complete" << std::endl;
 
 	return output;
 }
@@ -163,31 +141,10 @@ bool SourceRcon::Authenticate()
 
 bool SourceRcon::TransferPacket(SourceRconPacket& pak)
 {
-	// 14 Bytes by default:
-	// 4 => Size
-	// 4 => Id
-	// 4 => Type
-	// 1 => body end
-	// 1 => Command end
-	int32_t buffer_size = 14 + static_cast<int32_t>(pak.Command.size());
+	// Create buffer - don't worry about potential data, we override it anyway.
+	char* buffer = new char[pak.BufferSize];
+	std::memset(buffer, '\0', pak.BufferSize);
 
-	// Create buffer and make sure everything is \0 before we start writing to it!
-	char* buffer = new char[buffer_size];
-	std::memset(buffer, '\0', buffer_size);
-
-	// This is buffer_size subtracted by the already read size
-	pak.Size = buffer_size - 4;
-
-	// Set Id and increment counter
-	pak.Id = m_Counter++;
-
-	// In case counter is > 1337 => reset it to 1
-	if (m_Counter > 1337)
-	{
-		m_Counter = 1;
-	}
-
-	// Change from big to little endian if needed
 	if (m_IsBigEndian)
 	{
 		pak.Size = static_cast<int32_t>(bswap_32(pak.Size));
@@ -196,17 +153,14 @@ bool SourceRcon::TransferPacket(SourceRconPacket& pak)
 	}
 
 	// Push data to char* buffer
-#pragma warning(push, 0)
 	std::memcpy(buffer + 0x0, &pak.Size, 4);
 	std::memcpy(buffer + 0x4, &pak.Id, 4);
 	std::memcpy(buffer + 0x8, &pak.Type, 4);
 	std::memcpy(buffer + 0xC, pak.Command.data(), pak.Command.size());
-#pragma warning(pop)
 
 	// Write to socket
 	asio::error_code error;
-
-	asio::async_write(m_Socket, asio::buffer(buffer, buffer_size),
+	asio::async_write(m_Socket, asio::buffer(buffer, pak.BufferSize),
 		[&](const asio::error_code transfer_error, std::size_t)
 		{
 			error = transfer_error;
