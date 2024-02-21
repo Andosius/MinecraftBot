@@ -13,7 +13,6 @@
 
 // Standard Library
 #include <chrono>
-#include <iostream>
 
 //======================================
 
@@ -21,7 +20,7 @@
 constexpr std::chrono::duration TIMEOUT = std::chrono::seconds(2);
 
 
-bool IsBigEndian()
+static bool IsBigEndian()
 {
 	union {
 		uint32_t i;
@@ -30,27 +29,6 @@ bool IsBigEndian()
 
 	return bint.c[0] == 1;
 }
-
-bool IsLastMessage(const SourceRconPacket& pak)
-{
-	const char expectedBytes[] = { 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00 };
-
-	if (pak.Size != 8)
-	{
-		return false;
-	}
-
-	for (int i = 0; i < 8; i++)
-	{
-		if (pak.Command.data()[i] != expectedBytes[i])
-		{
-			return false;
-		}
-	}
-
-	return true;
-}
-
 
 
 SourceRcon::SourceRcon(const std::string& hostname, const std::string& port, const std::string& password)
@@ -99,14 +77,17 @@ std::string SourceRcon::SendCommand(const std::string& command)
 	TransferPacket(verification);
 
 	// Get result
-	SourceRconPacket result = ReceivePacket();
-	do
+	SourceRconPacket returned;
+	while (true)
 	{
-		output += result.Command;
-		result = ReceivePacket();
-	} while (!IsLastMessage(result));
+		returned = ReceivePacket();
 
-	std::cout << "Transaction complete" << std::endl;
+		// Check if packet starts with unknown request => that is our empty packet sent!
+		if (returned.Command.rfind("Unknown request", 0) == 0)
+			break;
+
+		output += returned.Command;
+	}
 
 	return output;
 }
