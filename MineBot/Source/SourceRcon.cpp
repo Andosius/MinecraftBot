@@ -126,9 +126,7 @@ void SourceRcon::asyncWait()
 
 bool SourceRcon::Authenticate()
 {
-	SourceRconPacket request{};
-	request.Type = SourceRconMessageType::SERVERDATA_AUTH;
-	request.Command = m_Password;
+	SourceRconPacket request(m_Counter++, SourceRconMessageType::SERVERDATA_AUTH, m_Password);
 
 	if (TransferPacket(request))
 	{
